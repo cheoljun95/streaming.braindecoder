@@ -1,0 +1,32 @@
+training_output_path: null
+result_path: null
+load_mode: best
+loss_term: bpe_uer
+asr_model: openai/whisper-large-v2
+rnnt_ckpt_path: null
+streamer_configs:
+  0: 
+    type: unit
+    vocoder_ckpt_path: /data/vocoder_ckpts/lj_hub_6-100_units2wav_duration_yourtts_lengthened/best_mel_ckpt.pkl
+    audio_sr: 16000
+    num_prev_unit: 0
+    expand_factor: 6.0
+    temperature: 1.0
+    beam_width: 5
+    best_n: 1
+    max_tokens: 20
+    output_len: 1280
+    use_buffer: true
+    emit_n: 1000
+    min_emit_n: 4
+  1:
+    type: text
+    temperature: 1.0
+    beam_width: 10
+    best_n: 5
+    max_tokens: 20
+    full_hypo: false
+context_buffer: 15 # architecture dependent
+device: cuda
+buffer_size: 16 # should be set as 1800 for bidirectional model
+

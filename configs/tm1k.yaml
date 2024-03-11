@@ -1,0 +1,133 @@
+experiment_name: 'joint_hbbpe_tm1k'
+model:
+  feature_extractor_configs:
+    MODEL: CNNLSTMTranscriber
+    input_dim: 506
+    output_dim: 1024 
+    conv_channel_dims: [512,512]
+    conv_kernel_sizes: [7,7]
+    conv_strides: [4,4]
+    ablate_regions: []
+    lstm_num_layers: 3
+    lstm_hidden_dim: 512
+    dropout: 0.5
+    use_res: false
+    use_gru: true
+    bidirectional: false
+    smth_configs: null
+  bundle_configs:
+    unit:
+      transcriber_configs:
+        MODEL: DummyTranscriber
+        input_dim: 1024
+      joiner_configs: 
+        MODEL: PremapJoinerv2
+        transcriber_dim: 1024
+        input_dim: 1024 # == encoding_dim
+        output_dim: 102 # == num_symbols 
+        fix_linear: true
+      predictor_configs:
+        num_symbols: 102 
+        output_dim: 1024 # ==encoding_dim
+        symbol_embedding_dim: 512
+        num_lstm_layers: 3
+        lstm_hidden_dim: 512 # ==symbol_embedding_dim
+        lstm_layer_norm: True
+        lstm_layer_norm_epsilon: 1e-3
+        lstm_dropout: 0.3
+      tokenizer_configs:
+        pre_tokenized: true
+        km_n: 100
+        collapse: true
+        spm: null
+        include_stress: null
+        include_space: null
+    bpe:
+      target: 'phoneme'
+      transcriber_configs:
+        MODEL: DummyTranscriber
+        input_dim: 1024
+      joiner_configs: 
+        MODEL: PremapJoinerv2
+        transcriber_dim: 1024
+        input_dim: 1024 # == encoding_dim
+        output_dim: 4097 # == num_symbols 
+        fix_linear: true
+      predictor_configs:
+        num_symbols: 4097 
+        output_dim: 1024 # ==encoding_dim
+        symbol_embedding_dim: 512
+        num_lstm_layers: 3
+        lstm_hidden_dim: 512 # ==symbol_embedding_dim
+        lstm_layer_norm: True
+        lstm_layer_norm_epsilon: 1e-3
+        lstm_dropout: 0.3
+      tokenizer_type: BPE
+      tokenizer_configs:
+         pre_tokenized: null
+         km_n: null
+         collapse: null
+         spm: null
+         include_stress: null
+         include_space: null
+  use_halfprecision: false
+  add_ema_noise: false
+  skip_pred: false
+  do_aux_ctc: false
+  do_aux_ema: false
+  freeze_predictor: true
+  freeze_joiner: false
+  step_max_tokens: 30
+  beam_width: 5
+  use_cosine_lr: false
+  lr: 0.0001
+  loss_coef_instructions:
+    unit_rnnt_loss:
+      value: 1
+    bpe_rnnt_loss:
+      value: 1
+  non_val_loss: []
+data:
+  data_dir: /data/common/bravo_streaming_data/tm1k_mimed_slow
+  train_files: /data/common/bravo_streaming_data/filelist/tm1k_train.txt
+  val_files: /data/common/bravo_streaming_data/filelist/tm1k_dev.txt
+  batch_size: 64
+  val_batch_size: 50
+  num_workers: 4
+  no_val_transform: true
+  transform_config:
+    transform_list: ['jitter', 'channeldrop']
+    channeldropout_rate: [0.3, 0.6]
+    channeldropout_prob: 0.75
+    jitter_range: [0.7,0.9]
+    jitter_max_start: 200
+predictor_ckpt:
+  - /data/common/bravo_streaming_data/pretrained_modules/hbunit_predictor.ckpt
+  - /data/common/bravo_streaming_data/pretrained_modules/bpe_predictor.ckpt
+joiner_ckpt: 
+  - /data/common/bravo_streaming_data/pretrained_modules/hbunit_joiner.ckpt
+  - /data/common/bravo_streaming_data/pretrained_modules/bpe_joiner.ckpt
+accumulate_grad_batches: 1
+checkpoint_epoch: 1
+max_epochs: 3000
+limit_val_batches: 1000
+resume_ckpt: null
+resume_mode: latest
+patience: 50
+min_delta: 0.005
+check_val_every_n_epoch: 5
+gradient_clip_val: 1.0
+log_metrics: 
+  - 'bpe_rnnt_loss'
+  - 'unit_rnnt_loss'
+  - 'bpe_uer'
+  - 'unit_uer'
+  - 'mean_uer'
+earlystop_metric: val_mean_uer
+gpus: '4'
+seed: 41
+
+
+
+  
+    
