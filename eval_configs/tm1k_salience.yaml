@@ -1,0 +1,5 @@
+rnnt_ckpt_path: model_ckpts/tm1k.ckpt
+test_files: data/filelist/tm1k_test50_withfeedback.txt
+save_path: data/results/tm1k
+data_dir: data/tm1k_mimed_slow
+device: cuda

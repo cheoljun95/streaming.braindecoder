@@ -22,12 +22,7 @@ class ECoGDataset(Dataset):
     def __getitem__(self,i):
         data = self.data[i]
         output = {}
-        try:
-            output["ecog"] = torch.from_numpy(np.load(data["ecog"])).float()
-        except:
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            print(data)
-            assert False
+        output["ecog"] = torch.from_numpy(np.load(data["ecog"])).float()
         if self.transform is not None:
             output["ecog"] = self.transform(output["ecog"])
                     
@@ -71,6 +66,8 @@ class ECoGDataModule(pl.LightningDataModule):
                 random.shuffle(self.train_files)
             self.train_files, self.val_files = (self.train_files[:int(len(self.train_files)*trainval_ratio[0])],
                             self.train_files[-int(len(self.train_files)*trainval_ratio[1]):])
+        else:
+            self.val_files = self._parse_files(val_files)
         self.batch_size=batch_size
         self.drop_last = drop_last
         self.pin_memory = pin_memory

@@ -48,3 +48,10 @@ The inference arameters are specified in `eval_configs/{NAME}.yaml`. There, the 
 python evaluate_model.py --config-name=tm1k
 ```
 This will save results under the specified `save_path`. Check `metrics` entry for the output types.
+
+
+For extracting saliance, run
+```
+python evaluate_salience.py --config-name=tm1k_salience
+
+```
