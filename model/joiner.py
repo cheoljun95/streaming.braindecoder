@@ -7,10 +7,6 @@ from torchaudio.models.rnnt import _Joiner
 
 BaseJoiner = _Joiner
 
-'''
-class CustomJoiner(nn.Module, _Joiner):
-    pass
-'''
 
 class PremapJoiner(torch.nn.Module):
 
@@ -24,13 +20,7 @@ class PremapJoiner(torch.nn.Module):
         else:
             raise ValueError(f"Unsupported activation {activation}")
             
-        hidden_dim = input_dim if hidden_dim is None else hidden_dim
-        '''
-        self.f_source = nn.Sequential(nn.Linear(input_dim, hidden_dim),
-                                    nn.GELU(),
-                                    nn.Linear(hidden_dim, hidden_dim),
-                                    nn.LayerNorm(hidden_dim))
-        '''                            
+        hidden_dim = input_dim if hidden_dim is None else hidden_dim                       
         
         self.f_target = nn.Sequential(nn.Linear(input_dim, hidden_dim),
                                     nn.GELU(),

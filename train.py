@@ -40,16 +40,18 @@ def main(cfg):
         for mi, predictor_ckpt in enumerate(predictor_ckpts):
             if predictor_ckpt is None:
                 continue
+            print(f"Loading predictor from {str(fix_path(predictor_ckpt))}")
             predictor_ckpt = torch.load(fix_path(predictor_ckpt))
             model.net.rnnts[mi].predictor.load_state_dict(predictor_ckpt['state_dict'])
             if config_get(cfg['model'], 'freeze_predictor', False):
                 model.net.rnnts[mi].predictor.requires_grad_(False)
     
-    joiner_ckpts = config_get(cfg, 'jointer_ckpt', None)
+    joiner_ckpts = config_get(cfg, 'joiner_ckpt', None)
     if joiner_ckpts is not None:
         for mi, joiner_ckpt in enumerate(joiner_ckpts):
             if joiner_ckpt is None:
                 continue
+            print(f"Loading joiner from {str(fix_path(joiner_ckpt))}")
             joiner_ckpt = torch.load(fix_path(joiner_ckpt))
             model.net.rnnts[mi].joiner.load_state_dict(joiner_ckpt['state_dict'],strict=False)
             if config_get(cfg['model'], 'freeze_joiner', False):
