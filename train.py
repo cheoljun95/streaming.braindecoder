@@ -3,6 +3,7 @@ from model.ecog2speech_rnnt import SpeechModel
 import lightning as pl
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint, EarlyStopping, Callback
 import hydra
+from hydra.utils import get_original_cwd
 from pathlib import Path
 import torch
 from utils.utils import load_cfg_and_ckpt_path
@@ -14,11 +15,21 @@ def config_get(cfg, entry, default):
         return default
     else:
         return cfg[entry]
-    
+
+def fix_path(path):
+    if str(path)[0] !='/':
+        return Path(get_original_cwd())/path
+    else:
+        return path
+
 @hydra.main(config_path='configs', config_name='tm1k')
 def main(cfg):
     
     # datamodule
+    cfg['data']['data_dir'] = fix_path(cfg['data']['data_dir'])
+    cfg['data']['train_files'] = fix_path(cfg['data']['train_files'])
+    if cfg['data']['val_files'] is not None:
+        cfg['data']['val_files'] = fix_path(cfg['data']['val_files'])
     datamodule = ECoGDataModule(**cfg['data'])
 
     # model
@@ -29,7 +40,7 @@ def main(cfg):
         for mi, predictor_ckpt in enumerate(predictor_ckpts):
             if predictor_ckpt is None:
                 continue
-            predictor_ckpt = torch.load(predictor_ckpt)
+            predictor_ckpt = torch.load(fix_path(predictor_ckpt))
             model.net.rnnts[mi].predictor.load_state_dict(predictor_ckpt['state_dict'])
             if config_get(cfg['model'], 'freeze_predictor', False):
                 model.net.rnnts[mi].predictor.requires_grad_(False)
@@ -39,7 +50,7 @@ def main(cfg):
         for mi, joiner_ckpt in enumerate(joiner_ckpts):
             if joiner_ckpt is None:
                 continue
-            joiner_ckpt = torch.load(joiner_ckpt)
+            joiner_ckpt = torch.load(fix_path(joiner_ckpt))
             model.net.rnnts[mi].joiner.load_state_dict(joiner_ckpt['state_dict'],strict=False)
             if config_get(cfg['model'], 'freeze_joiner', False):
                 model.net.rnnts[mi].joiner.requires_grad_(False)

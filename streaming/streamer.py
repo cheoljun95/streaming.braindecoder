@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-from model.multi_rnnt_test import MunitRNNT
+from model.ecog2speech_rnnt import MunitRNNT
 from model.rnnt_beamsearch import RNNTBeamSearch
 from synthesis.hificar_dur import HifiCarDurationSynthesizer
 import time
@@ -204,7 +204,6 @@ class MultiStreamer(nn.Module):
         self.context_buffer = context_buffer
         self.device = device
         self.ftextractor  = model.feature_extractor
-        self.shared_transcriber = model.shared_transcriber
         self.buffer_size = buffer_size
         self.context_buffer_ = None
         self.ft_state_ = None
@@ -244,10 +243,6 @@ class MultiStreamer(nn.Module):
                 with torch.no_grad():
                     x,_,  self.ft_state_ =self.ftextractor.infer(x.unsqueeze(0), torch.tensor([x.shape[1]],device=x.device),
                                                        self.ft_state_)
-            if self.shared_transcriber is not None:
-                with torch.no_grad():
-                    x,_,self.st_state_ = self.shared_transcriber.infer(x, torch.tensor([x.shape[2]],device=x.device),
-                                                                 self.st_state_)
             times.append(time.time()-start)
         else:
             times.append(0)

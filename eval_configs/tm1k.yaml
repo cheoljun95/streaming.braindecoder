@@ -1,0 +1,41 @@
+rnnt_ckpt_path: model_ckpts/tm1k.ckpt
+test_files: data/filelist/tm1k_test_withfeedback.txt
+save_path: data/results/tm1k
+data_dir: data/tm1k_mimed_slow
+asr_model: openai/whisper-large-v2
+streamer_configs:
+  0: 
+    type: unit
+    vocoder_ckpt_path: data/vocoder/best_mel_ckpt.pkl
+    audio_sr: 16000
+    num_prev_unit: 0
+    expand_factor: 7.0
+    temperature: 1.0
+    beam_width: 5
+    best_n: 1
+    max_tokens: 20
+    output_len: 1280
+    use_buffer: true
+    emit_n: 100
+    min_emit_n: 4
+  1:
+    type: text
+    temperature: 1.0
+    beam_width: 20
+    best_n: 10
+    max_tokens: 20
+    full_hypo: false
+context_buffer: 15 # architecture dependent 15*2+1 - buffer_size(16)
+device: cuda
+buffer_size: 16 # should be set as 1800 for bidirectional model
+save_wavfiles: false
+is_chance: false
+metrics:
+  gt_unit: gt_units
+  gt_text: gt_text
+  asr_transcript: asr_transcript_streaming
+  pred_audio: pred_audio_streaming
+  pred_text: pred_text_streaming
+  pred_units: pred_units_streaming
+  speech_emission: speech_emissions_streaming
+  text_emission: text_emissions_streaming

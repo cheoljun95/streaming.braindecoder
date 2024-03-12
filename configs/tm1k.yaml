@@ -88,9 +88,9 @@ model:
       value: 1
   non_val_loss: []
 data:
-  data_dir: /data/common/bravo_streaming_data/tm1k_mimed_slow
-  train_files: /data/common/bravo_streaming_data/filelist/tm1k_train.txt
-  val_files: /data/common/bravo_streaming_data/filelist/tm1k_dev.txt
+  data_dir: data/tm1k_mimed_slow
+  train_files: data/filelist/tm1k_train.txt
+  val_files: data/filelist/tm1k_dev.txt
   batch_size: 64
   val_batch_size: 50
   num_workers: 4
@@ -102,11 +102,11 @@ data:
     jitter_range: [0.7,0.9]
     jitter_max_start: 200
 predictor_ckpt:
-  - /data/common/bravo_streaming_data/pretrained_modules/hbunit_predictor.ckpt
-  - /data/common/bravo_streaming_data/pretrained_modules/bpe_predictor.ckpt
+  - data/pretrained_modules/hbunit_predictor.ckpt
+  - data/pretrained_modules/bpe_predictor.ckpt
 joiner_ckpt: 
-  - /data/common/bravo_streaming_data/pretrained_modules/hbunit_joiner.ckpt
-  - /data/common/bravo_streaming_data/pretrained_modules/bpe_joiner.ckpt
+  - data/pretrained_modules/hbunit_joiner.ckpt
+  - data/pretrained_modules/bpe_joiner.ckpt
 accumulate_grad_batches: 1
 checkpoint_epoch: 1
 max_epochs: 3000

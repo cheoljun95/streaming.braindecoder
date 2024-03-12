@@ -128,45 +128,6 @@ class PhonemeTokenizer(nn.Module):
     
     def eos_id(self):
         return self.blank
-    
-class SyllableTokenizer(nn.Module):
-    def __init__(self, syllable_vocab_file=None, **kwargs):
-        super().__init__()
-        if syllable_vocab_file is None:
-            syllable_vocab_file = Path(__file__).parent.parent/'misc'/'syllables.txt'
-        with open(syllable_vocab_file, 'r') as f:
-            syllables=f.readlines()
-        self.syllables = [syl.rstrip() for syl in syllables]
-        self.syllables.append('<UNK>')
-        self.syl2idx = {syl:i for i, syl in enumerate(self.syllables)}
-        self.pad_id = len(self.syllables) 
-        self.blank =  len(self.syllables)+1
-        
-    def _syl2idx(self, syl):
-        return self.syl2idx[syl] if syl in self.syllables else self.syl2idx['<UNK>']
-              
-    def __call__(self, texts, **kwargs):
-        token_idxs = [[self._syl2idx(t) for  t in text.split(' ')] for text in texts]
-        token_idxs = [torch.tensor([self.blank] + idxs) for idxs in token_idxs]
-        token_lengths = torch.tensor([len(idxs) for idxs in token_idxs])
-        
-        token_idxs = nn.utils.rnn.pad_sequence(token_idxs,batch_first=True, padding_value=self.pad_id)
-        return token_idxs, token_lengths, texts
-    
-    def get_decoder(self):
-        return lambda tokens: ' '.join([self.syllables[i] for i in tokens])
-    
-    def get_remove_tokens(self):
-        return [self.pad_id, self.blank]
-    
-    def pad_id(self):
-        return self.pad_id
-    
-    def bos_id(self):
-        return self.blank
-    
-    def eos_id(self):
-        return self.blank   
 
 class BPETokenizer(nn.Module):
     

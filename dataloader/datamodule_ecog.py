@@ -22,7 +22,12 @@ class ECoGDataset(Dataset):
     def __getitem__(self,i):
         data = self.data[i]
         output = {}
-        output["ecog"] = torch.from_numpy(np.load(data["ecog"])).float()
+        try:
+            output["ecog"] = torch.from_numpy(np.load(data["ecog"])).float()
+        except:
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            print(data)
+            assert False
         if self.transform is not None:
             output["ecog"] = self.transform(output["ecog"])
                     
@@ -189,25 +194,6 @@ class Jitter(object):
         si = min(self.max_start,si)
         x=x[si:ei]
         return x
-    
-class MultiJitter(object):
-    def __init__(self, fraction_range=[0.8,1.0],max_start=100, targets=[],factor=4):
-        self.max_start = 400
-        self.targets=targets
-        self.fraction_pool = np.linspace(fraction_range[0],fraction_range[1],5)
-        self.factor = factor
-        
-    def __call__(self, d):
-        x = d['ecog']
-        fraction = np.random.choice(self.fraction_pool, 1)[0]
-        start_f = np.random.uniform()*(1-fraction)
-        end_f = start_f+fraction
-        si,ei = int(len(x)*start_f),max(len(x),len(x)*end_f)
-        si = min(self.max_start,si)
-        d['ecog']=x[si:ei]
-        for target in self.targets:
-            d[target] = d[target][si//self.factor:ei//self.factor]
-        return d
     
     
 class ScaleAugment(object):
