@@ -89,8 +89,8 @@ model:
   non_val_loss: []
 data:
   data_dir: data/tm1k_mimed_slow
-  train_files: data/filelist/tm1k_train.txt
-  val_files: data/filelist/tm1k_dev.txt
+  train_files: filelist/tm1k_train.txt
+  val_files: filelist/tm1k_dev.txt
   batch_size: 64
   val_batch_size: 50
   num_workers: 4
@@ -124,7 +124,7 @@ log_metrics:
   - 'unit_uer'
   - 'mean_uer'
 earlystop_metric: val_mean_uer
-gpus: '4'
+gpus: '7'
 seed: 41
 
 
