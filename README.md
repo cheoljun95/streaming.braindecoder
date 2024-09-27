@@ -32,22 +32,23 @@ For training 1024-word-General (tm1k) model,
 ```
 python train.py --config-name=tm1k
 ```
-This will create output directory as `outputs/{DATE}/{TIME}`. The training log can be monitored by `tensorboard` (e.g., `cd outputs; tensorboard --logdir=./`).
+This will create output directory as `outputs/{DATE}/{TIME}/joint_hbbpe_tm1k`. The training log can be monitored by `tensorboard` (e.g., `cd outputs; tensorboard --logdir=./`).
 
 
 After training is done, export and save trained model.
 ```
 mkdir model_ckpts
-python export_decoder.py --ckpt_path=outputs/{DATE}/{TIME} --output_path=model_ckpts/tm1k.ckpt
+python export_decoder.py --ckpt_path=outputs/{DATE}/{TIME}/joint_hbbpe_tm1k --output_path=model_ckpts/tm1k.ckpt
 ```
+If `ckpt_path` is not specified, the most recent training directory under `outputs` will be processed.
 
 ## Run model on test data
 
-The inference arameters are specified in `eval_configs/{NAME}.yaml`. There, the `rnnt_ckpt_path` and `test_files` and `save_path` should be specified for specific model. For tm1k, you can run
+For tm1k, you can run
 ```
 python evaluate_model.py --config-name=tm1k
 ```
-This will save results under the specified `save_path`. Check `metrics` entry for the output types.
+The results will be saved under `data/results/tm1k` by default. The parameters for the streaming system are specified in `eval_configs/tm1k.yaml`. There, the `rnnt_ckpt_path` and `test_files` and `save_path` are specified for specific model. This will save results under the specified `save_path`. Check `metrics` entry for the output types. 
 
 
 For extracting saliance, run
