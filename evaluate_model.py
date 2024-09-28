@@ -56,6 +56,10 @@ def fix_path(path):
 @hydra.main(config_path='eval_configs')
 def main(cfg):
     device = cfg['device']
+    if "cuda" in device and not torch.cuda.is_available():
+        print("Device is set as cuda but cuda is not available. Running on CPU instead.")
+        device = "cpu"
+        cfg['device'] = "cpu"
     # set up saving directory
     save_path =fix_path(cfg['save_path'])
     save_path.mkdir(exist_ok=True)
