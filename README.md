@@ -24,10 +24,28 @@ pip install -r requirements.txt
 
 
 ## Download Dataset
-Download the data package to `{DATA_ROOT}` and make a symlink to this directory. Every code is based on the relative path from this directory, so this symlink is required.
+
+The dataset is split to multiple `tar.gz` files. Please copy and paste `unzip_tar.sh` in this repo to the directory (lets say `DATA_ROOT`) where you downloaded all the zip files and run the script.
+This will create `tm1k_mimed_slow` and 23628 numpy files will be extracted under the folder.
+Then, create data folder and make symlink to the downloaded data 
 ```
-ln -s {DATA_ROOT} ./data
+mkdir data
+cd data
+ln -s DATA_ROOT/tm1k_mimed_slow ./tm1k_mimed_slow
+cd ..
 ```
+
+## Unpack pretrained modules
+
+Our RNN-T model leverages pretrained language models and speech synthesizer. Those model checkpoints also should be unpacked under `data` directory.
+Assume you have `pretrained_modules` and `vocoder` under `CKPT_DATA_ROOT` by unzipping the resources.
+```
+cd data
+ln -s CKPT_DATA_ROOT/pretrained_modules ./pretrained_modules
+ln -s CKPT_DATA_ROOT/vocoder ./pretrained_modules
+cd ..
+```
+
 
 ## Train model
 
@@ -60,3 +78,11 @@ For extracting saliance, run
 python evaluate_salience.py --config-name=tm1k_salience
 
 ```
+
+## Analysis figures
+
+Please check notebooks under `figures`
+
+## Demo 
+
+Please checek `notebooks/Streaming_Demo.ipynb`
