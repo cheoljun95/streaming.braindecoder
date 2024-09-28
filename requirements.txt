@@ -9,3 +9,13 @@ transformers
 wget
 g2p_en 
 pydantic < 2.0.0
+jupyter
+matplotlib==3.8.2
+librosa
+g2p_en
+editdistance
+tabulate
+pandas==1.5.3
+seaborn==0.11.0
+statannot
+numpy==1.26.3
