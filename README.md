@@ -1,5 +1,9 @@
 # Streaming Brain2Speech Decoder by RNN-T
 
+## Figures
+
+* Reproduction of the main results of the manuscript are in `figures`
+
 ## Installation 
 
 * Set up a new Conda environment
