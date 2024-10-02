@@ -85,4 +85,4 @@ Please check notebooks under `figures`
 
 ## Demo 
 
-Please checek `notebooks/Streaming_Demo.ipynb`. This demo shows a simulation on real-time text and speech decoding, where speech is being decoded in real-time and stacked at the buffer. You can hear the synthesized speech after running the code. The text will be printed simultaneously while decoding. The model loading in the notebook would take several seconds (<30 sec) and the demo will run in less than 30 seconds on CPU. 
+Please check `notebooks/Streaming_Demo.ipynb`. This demo shows a simulation on real-time text and speech decoding, where speech is being decoded in real-time and stacked at the buffer. You can hear the synthesized speech after running the code. The text will be printed simultaneously while decoding. The model loading in the notebook would take several seconds (<30 sec) and the demo will run in less than 30 seconds on CPU. 
