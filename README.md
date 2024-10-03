@@ -22,6 +22,8 @@ pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --e
 pip install -r requirements.txt
 ```
 
+* The checkpoint of our main model should be in `model_ckpts/tm1k.ckpt`
+
 
 ## Download Dataset
 
@@ -57,7 +59,7 @@ python train.py --config-name=tm1k
 This will create output directory as `outputs/{DATE}/{TIME}/joint_hbbpe_tm1k`. The training log can be monitored by `tensorboard` (e.g., `cd outputs; tensorboard --logdir=./`).
 
 
-After training is done, export and save trained model. It takes approximately 40 hours to reach the minimum error rates on a single NVIDIA A6000 GPU.
+After training is done, export and save trained model. It takes approximately 40 hours to reach the minimum error rates on a single NVIDIA A6000 GPU. CAUTION: this will overwrite the existing checkpoint file. Please use another name than `tm1k.ckpt` to avoid overwriting.
 ```
 mkdir model_ckpts
 python export_decoder.py --ckpt_path=outputs/{DATE}/{TIME}/joint_hbbpe_tm1k --output_path=model_ckpts/tm1k.ckpt
