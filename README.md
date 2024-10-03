@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 The dataset is split to multiple `tar.gz` files. Please copy and paste `unzip_tar.sh` in this repo to the directory (lets say `DATA_ROOT`) where you downloaded all the zip files and run the script.
 This will create `tm1k_mimed_slow` and 23628 numpy files will be extracted under the folder.
-Then, create data folder and make symlink to the downloaded data 
+Then, come back to this source code directory, create data folder, and make symlink to the downloaded data 
 ```
 mkdir data
 cd data
