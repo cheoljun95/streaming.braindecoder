@@ -406,7 +406,7 @@ class HiFiGANGeneratorDur(torch.nn.Module):
         self.unit_buffer = torch.tensor([],dtype=torch.long).to(self.device)
         
 
-    def forward(self, c, spk_id=None, spk=None, ar=None, ph=None, dur=None):
+    def forward(self, c, ar, dur):
         if self.use_emb:
             # (B, T)
             mask = c == self.pad_id
@@ -418,20 +418,7 @@ class HiFiGANGeneratorDur(torch.nn.Module):
             ar_feats = self.ar_model(ar) # (batchsize, ar_output)
             ar_feats = ar_feats.unsqueeze(2).repeat(1, 1, c.shape[2]) # (batchsize, ar_output, length)
             c = torch.cat((c, ar_feats), dim=1)
-        # logging.info(('after ar', c.shape))
-        if self.use_spk_emb:
-            cspk = self.spk_fc(spk)
-            cspk = cspk.unsqueeze(2).repeat(1, 1, c.shape[2])
-            c = torch.cat((c, cspk), dim=1)
-        if self.use_spk_id:
-            spk_emb = self.spk_emb_mat(spk_id)  # (batchsize, spk_emb_size)
-            spk_emb = self.spk_fc(spk_emb)  # (batchsize, in_channels)
-            spk_emb = spk_emb.unsqueeze(2).repeat(1, 1, c.shape[2])  # (batchsize, in_channels, length)
-            c = c + spk_emb
-        if self.use_ph:
-            ph_feats = self.ph_emb_mat(ph)  # (batchsize, length, ph_emb_size)
-            ph_feats = ph_feats.transpose(1, 2)
-            c = torch.cat((c, ph_feats), dim=1)
+        
         ds_out = self.dur_predictor(c.transpose(1, 2), x_masks = mask)
         c = self.len_changer(c.transpose(1, 2), dur).transpose(1, 2)
         c = self.input_conv(c)
@@ -445,14 +432,7 @@ class HiFiGANGeneratorDur(torch.nn.Module):
         # logging.info(c.shape)
         out = self.output_conv(c)  # (batch_size, 1, input_len*final_scale)
         # logging.info(out.shape)
-        if self.use_aux_loss:
-            c = c.transpose(1, 2)
-            ph_out = self.aux_fc(c)
-            ph_out = ph_out.transpose(1, 2)
-            ph_out = self.aux_pool(ph_out)
-            return (out, ph_out)
-        else:
-            return out, ds_out
+        return out, ds_out
 
     def reset_parameters(self):
         """Reset parameters.
