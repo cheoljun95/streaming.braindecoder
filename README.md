@@ -22,7 +22,7 @@ pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --e
 pip install -r requirements.txt
 ```
 
-* The checkpoint of our main model should be in `model_ckpts/tm1k.ckpt`
+* The checkpoint of our main model should be in `model_ckpts/tm1k.ckpt`, and checkpoints for pretrained language models and vocoder should be under the `data/pretrained_modules` and `data/vocoder`, respectively.
 
 
 ## Download Dataset
@@ -31,20 +31,8 @@ The dataset is split to multiple `tar.gz` files. Please copy and paste `unzip_ta
 This will create `tm1k_mimed_slow` and 23628 numpy files will be extracted under the folder.
 Then, come back to this source code directory, create data folder, and make symlink to the downloaded data 
 ```
-mkdir data
 cd data
 ln -s DATA_ROOT/tm1k_mimed_slow ./tm1k_mimed_slow
-cd ..
-```
-
-## Unpack pretrained modules
-
-Our RNN-T model leverages pretrained language models and speech synthesizer. Those model checkpoints also should be unpacked under `data` directory.
-Assume you have `pretrained_modules` and `vocoder` under `CKPT_DATA_ROOT` by unzipping the resources.
-```
-cd data
-ln -s CKPT_DATA_ROOT/pretrained_modules ./pretrained_modules
-ln -s CKPT_DATA_ROOT/vocoder ./pretrained_modules
 cd ..
 ```
 
@@ -88,3 +76,7 @@ Please check notebooks under `figures`
 ## Demo 
 
 Please check `notebooks/Streaming_Demo.ipynb`. This demo shows a simulation on real-time text and speech decoding, where speech is being decoded in real-time and stacked at the buffer. You can hear the synthesized speech after running the code. The text will be printed simultaneously while decoding. The model loading in the notebook would take several seconds (<30 sec) and the demo will run in less than 30 seconds on CPU. 
+
+## Other technical tips
+
+Our framework relies on the acoustic-speech units extracted by K Means on the HuBERT latent features. `extract_hubert_units.py` is used for extracting target units for brain decoder and input data for vocoder. Check arguments by `python extract_hubert_units.py --help`. (`--dedup` should be on for extracting targets for the brain decoder.)
