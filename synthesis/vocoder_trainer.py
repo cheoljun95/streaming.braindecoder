@@ -5,16 +5,13 @@ from lightning import LightningModule
 import math
 import random
 import numpy as np
-
 from .hificar_dur import HiFiGANGeneratorDur
 from .discriminator import HiFiGANMultiScaleMultiPeriodDiscriminator
 from .losses import GeneratorAdversarialLoss, DiscriminatorAdversarialLoss, \\
                     MelSpectrogramLoss, FeatureMatchLoss, DurLoss
 
 # TODO
-# Training script
 # Loading pre-trained hifigan and hubert centroids
-# Write the config
 # Export function
 
 class VocoderTrainer(LightningModule):

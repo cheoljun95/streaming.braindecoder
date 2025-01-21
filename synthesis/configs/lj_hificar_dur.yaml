@@ -1,0 +1,177 @@
+name: lj_hificar_dur
+generator_params:
+  ar_hidden: 512
+  ar_input: 512
+  ar_output: 512
+  bias: true
+  channels: 512
+  dur_channels: 384
+  dur_dropout: 0.5
+  dur_kernel_size: 3
+  dur_shift: 1.0
+  emb_dim: 768
+  emb_p: data/center-100.npy
+  in_channels: 1280
+  kernel_size: 7
+  nonlinear_activation: LeakyReLU
+  nonlinear_activation_params:
+    negative_slope: 0.1
+  num_dur_layers: 2
+  num_emb: 100
+  out_channels: 1
+  resblock_dilations:
+  - - 1
+    - 3
+    - 5
+  - - 1
+    - 3
+    - 5
+  - - 1
+    - 3
+    - 5
+  resblock_kernel_sizes:
+  - 3
+  - 7
+  - 11
+  upsample_kernel_sizes:
+  - 16
+  - 10
+  - 8
+  - 4
+  upsample_scales:
+  - 8
+  - 5
+  - 4
+  - 2
+  use_additional_convs: true
+  use_ar: true
+  use_emb: true
+  use_weight_norm: true
+discriminator_params:
+  follow_official_norm: true
+  period_discriminator_params:
+    bias: true
+    channels: 32
+    downsample_scales:
+    - 3
+    - 3
+    - 3
+    - 3
+    - 1
+    in_channels: 1
+    kernel_sizes:
+    - 5
+    - 3
+    max_downsample_channels: 1024
+    nonlinear_activation: LeakyReLU
+    nonlinear_activation_params:
+      negative_slope: 0.1
+    out_channels: 1
+    use_spectral_norm: false
+    use_weight_norm: true
+  periods:
+  - 2
+  - 3
+  - 5
+  - 7
+  - 11
+  scale_discriminator_params:
+    bias: true
+    channels: 128
+    downsample_scales:
+    - 4
+    - 4
+    - 4
+    - 4
+    - 1
+    in_channels: 1
+    kernel_sizes:
+    - 15
+    - 41
+    - 5
+    - 3
+    max_downsample_channels: 1024
+    max_groups: 16
+    nonlinear_activation: LeakyReLU
+    nonlinear_activation_params:
+      negative_slope: 0.1
+    out_channels: 1
+  scale_downsample_pooling: AvgPool1d
+  scale_downsample_pooling_params:
+    kernel_size: 4
+    padding: 2
+    stride: 2
+  scales: 3
+loss_configs: 
+  generator_adv_loss_configs: 
+    mel_loss_configs:
+      fft_size: 1024
+      fmax: 11025
+      fmin: 0
+      fs: 16000
+      hop_size: 256
+      log_base: null
+      num_mels: 80
+      win_length: null
+      window: hann
+    feature_match_loss_configs:
+      average_by_discriminators: false # Whether to average loss by #discriminators.
+      average_by_layers: false         # Whether to average loss by #layers in each discriminator.
+      include_final_outputs: false     # Whether to include final outputs in feat match loss calculation.
+    generator_adv_loss_configs:
+      average_by_discriminators: false
+    discriminator_adv_loss_configs:
+      average_by_discriminators: false
+    dur_loss_configs:
+      shift: 1.0
+gen_loss_coef:
+  mel_loss: 45.0
+  feat_match_loss: 2.0
+  gen_adv_loss: 1.0
+  dur_loss: 1.0
+disc_loss_coef:
+  disc_adv_loss: 1.0
+gen_lr_configs:
+  optimizer:
+    lr: 1.0e-4
+    betas: [0.5, 0.9]
+    weight_decay: 0.0
+  scheduler:
+    gamma: 0.5
+    milestones:
+    - 80000
+    - 160000
+    - 240000
+    - 320000
+disc_lr_configs:
+  optimizer:
+    lr: 1.0e-4
+    betas: [0.5, 0.9]
+    weight_decay: 0.0
+  scheduler:
+    gamma: 0.5
+    milestones:
+    - 80000
+    - 160000
+    - 240000
+    - 320000   
+data:
+  wav_dir: data/wavs
+  unit_dir: data/unit
+  split_manifests: 
+    train: data/manifests/train.txt
+    dev: data/manifests/dev.txt
+    test: data/manifests/test.txt
+  sample_len: 4160
+  ar_len: 512
+  batch_size: 32
+checkpoint_epoch: 1
+max_steps: 800000
+limit_val_batches: 1000
+pretrained_ckpt: null
+resume_ckpt: null
+check_val_every_n_epoch: 1 
+val_check_interval: null 
+accumulate_grad_batches: 1
+gpus: '0'
+seed: 41

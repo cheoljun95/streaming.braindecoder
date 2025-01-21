@@ -14,5 +14,20 @@ Run `extract_hubert_units.py` script in the parent directory to extract HuBERT u
 ```
 python extract_hubert_units.py --data_path=DATA_ROOT/LJSpeech-1.1/wavs --save_path=DATA_ROOT/LJSpeech-1.1/hb100
 ```
+And place them under `data` by simlink.
 
-#### 
+```
+mkdir data
+cd data
+ln -s DATA_ROOT/LJSpeech-1.1/wavs ./
+ln -s DATA_ROOT/LJSpeech-1.1/hb100 ./
+cd ..
+```
+
+#### Train vocoder
+
+Run the following command to train a vocoder. It will run the default config, `configs/lj_hificar_dur.yaml`. Please check the parameter there for customization. The above process should be done properly to run this code. The training checkpoints and logs will be created under `outputs/DATE/TIME`.
+
+```
+python train_vocoder.py
+```
