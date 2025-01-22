@@ -47,10 +47,10 @@ def main(cfg):
 
     # checkpoint best
     checkpoint_callback_topk = ModelCheckpoint(
-        monitor="mel_loss",
+        monitor="val_mel_loss",
         save_top_k=1,
         mode="min",
-        filename='best-{epoch}-{val_loss:.2f}'
+        filename='best-{epoch}-{val_mel_loss:.2f}'
     )
     
     # checkpoint every N epochs
