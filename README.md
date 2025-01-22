@@ -77,6 +77,12 @@ Please check notebooks under `figures`
 
 Please check `notebooks/Streaming_Demo.ipynb`. This demo shows a simulation on real-time text and speech decoding, where speech is being decoded in real-time and stacked at the buffer. You can hear the synthesized speech after running the code. The text will be printed simultaneously while decoding. The model loading in the notebook would take several seconds (<30 sec) and the demo will run in less than 30 seconds on CPU. 
 
+## Training vocoder
+
+Check `synthesis/README.md` for the instruction for training a vocoder.
+
 ## Other technical tips
 
 Our framework relies on the acoustic-speech units extracted by K Means on the HuBERT latent features. `extract_hubert_units.py` is used for extracting target units for brain decoder and input data for vocoder. Check arguments by `python extract_hubert_units.py --help`. (`--dedup` should be on for extracting targets for the brain decoder.)
+
+

@@ -10,7 +10,7 @@ generator_params:
   dur_kernel_size: 3
   dur_shift: 1.0
   emb_dim: 768
-  emb_p: data/center-100.npy
+  emb_p: assets/center-100.npy
   in_channels: 1280
   kernel_size: 7
   nonlinear_activation: LeakyReLU
@@ -159,9 +159,9 @@ data:
   wav_dir: data/wavs
   unit_dir: data/unit
   split_manifests: 
-    train: data/manifests/train.txt
-    dev: data/manifests/dev.txt
-    test: data/manifests/test.txt
+    train: assets/manifests/train.txt
+    dev: assets/manifests/dev.txt
+    test: assets/manifests/test.txt
   sample_len: 4160
   ar_len: 512
   batch_size: 32
