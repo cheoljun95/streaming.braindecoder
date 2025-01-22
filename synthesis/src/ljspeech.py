@@ -9,7 +9,7 @@ import soundfile as sf
 import librosa
 
 
-PAD_ID = 100
+PAD_ID = 100 # hard-coded as using 100 KMean clusters
 
 def deduplicate(units):
     units = np.concatenate([units, np.array([PAD_ID+1])])
@@ -31,12 +31,12 @@ class SpeechDataset(Dataset):
         assert self.sample_len % 320 == 0
         
     def __len__(self):
-        return len(self.seg_files)
+        return len(self.tags)
     
     def __getitem__(self,i):
         tag = self.tags[i]
         wav_file = self.wav_dir/f"{tag}.wav"
-        unit_file = self.wav_dir/f"{tag}.npy"
+        unit_file = self.unit_dir/f"{tag}.npy"
         
         wav, orig_sr = sf.read(wav_file)
         
@@ -64,6 +64,7 @@ class SpeechDataset(Dataset):
         
         units, dur = deduplicate(units)
         units = torch.from_numpy(units).long()
+        dur = torch.from_numpy(dur).long()
         ar = torch.from_numpy(ar).float()
         
         return {'wav':wav, 'units':units, 'ar':ar, 'dur':dur}
@@ -74,7 +75,7 @@ class SpeechDataset(Dataset):
         data['wav'] = nn.utils.rnn.pad_sequence([d['wav'] for d in batch], batch_first=True, padding_value=0.0)
         data['ar'] = nn.utils.rnn.pad_sequence([d['ar'] for d in batch], batch_first=True, padding_value=0.0)
         data['units'] = nn.utils.rnn.pad_sequence([d['units'] for d in batch], batch_first=True, padding_value=PAD_ID)
-        data['dur'] = nn.utils.rnn.pad_sequence([d['dur'] for d in batch], batch_first=True, padding_value=0.0)
+        data['dur'] = nn.utils.rnn.pad_sequence([d['dur'] for d in batch], batch_first=True, padding_value=0)
         
         return data
     
@@ -105,7 +106,6 @@ class SpeechDataModule(LightningDataModule):
         self.ar_len = ar_len
         
     def _load_tags(self, split):
-
         with open(self.split_manifests[split], "r") as f:
             tags = [Path(l.rstrip()).stem for l in f.readlines()]
             tags = [tag for tag in tags if (self.wav_dir/f"{tag}.wav").exists() and (self.unit_dir/f"{tag}.npy").exists()]

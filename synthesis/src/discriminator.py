@@ -14,7 +14,6 @@ import torch
 import torch.nn.functional as F
 
 from .block import HiFiGANResidualBlock as ResidualBlock
-from .block import HiFiGANResidualFiLMBlock as ResidualFiLMBlock
 from .block import PastFCEncoder, SoftClamp
 
 

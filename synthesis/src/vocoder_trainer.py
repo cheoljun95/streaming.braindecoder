@@ -7,7 +7,7 @@ import random
 import numpy as np
 from .hificar_dur import HiFiGANGeneratorDur
 from .discriminator import HiFiGANMultiScaleMultiPeriodDiscriminator
-from .losses import GeneratorAdversarialLoss, DiscriminatorAdversarialLoss, \\
+from .losses import GeneratorAdversarialLoss, DiscriminatorAdversarialLoss, \
                     MelSpectrogramLoss, FeatureMatchLoss, DurLoss
 
 # TODO
@@ -20,7 +20,7 @@ class VocoderTrainer(LightningModule):
         super().__init__()
         self.config = config
         self.generator = HiFiGANGeneratorDur(**config.generator_params)
-        self.discriminator = discriminator_params(**config.discriminator_params)
+        self.discriminator = HiFiGANMultiScaleMultiPeriodDiscriminator(**config.discriminator_params)
         self.gen_adv_loss = GeneratorAdversarialLoss(**config.loss_configs["generator_adv_loss_configs"])
         self.disc_adv_loss = DiscriminatorAdversarialLoss(**config.loss_configs["discriminator_adv_loss_configs"])
         self.mel_loss = MelSpectrogramLoss(**config.loss_configs["mel_loss_configs"])
@@ -79,7 +79,7 @@ class VocoderTrainer(LightningModule):
         
         self.toggle_optimizer(optimizer_g)
         gen_loss_val = 0
-        outputs = self.net.forward_gen(**batch)
+        outputs = self.forward_gen(**batch)
         for coef_name, coef_value in self.config.gen_loss_coef.items():
             if coef_name in outputs.keys() and coef_value>0:
                 gen_loss_val += coef_value * outputs[coef_name]
@@ -95,7 +95,7 @@ class VocoderTrainer(LightningModule):
 
             
     def validation_step(self, batch):
-        outputs = self.net.forward_gen(**batch)
+        outputs = self.forward_gen(**batch)
         loss_val = 0
         
         for coef_name, coef_value in self.config.gen_loss_coef.items():
@@ -108,12 +108,8 @@ class VocoderTrainer(LightningModule):
     
     def configure_optimizers(self):
 
-        opt_g = torch.optim.Adam([{'params': self.net.generator.parameters()},
-                                  {'params': self.net.input_layer.parameters()},
-                                  {'params': self.net.spkemb_layer.parameters()},
-                                  {'params': self.net.progress_encoding.parameters()}],
-                                 **self.config.gen_lr_configs["optimizer"])
-        opt_d = torch.optim.Adam(self.net.discriminator.parameters(), **self.config.disc_lr_configs["optimizer"])
+        opt_g = torch.optim.Adam(self.generator.parameters(), **self.config.gen_lr_configs["optimizer"])
+        opt_d = torch.optim.Adam(self.discriminator.parameters(), **self.config.disc_lr_configs["optimizer"])
         sch_g = torch.optim.lr_scheduler.MultiStepLR(optimizer=opt_g, **self.config.gen_lr_configs["scheduler"])
         sch_d = torch.optim.lr_scheduler.MultiStepLR(optimizer=opt_d, **self.config.disc_lr_configs["scheduler"])
 

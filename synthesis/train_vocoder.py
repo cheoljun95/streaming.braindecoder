@@ -1,5 +1,5 @@
-from ljspeech import SpeechDataModule
-from vocoder_trainer import VocoderTrainer
+from src.ljspeech import SpeechDataModule
+from src.vocoder_trainer import VocoderTrainer
 import lightning as pl
 from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint, Callback
 import hydra
@@ -73,7 +73,7 @@ def main(cfg):
                          accelerator="gpu",
                          #strategy="ddp",
                          strategy='ddp_find_unused_parameters_true',
-                         max_epochs = cfg['max_epochs'],
+                         max_steps = cfg['max_steps'],
                          num_sanity_val_steps=0,
                          check_val_every_n_epoch=cfg['check_val_every_n_epoch'],
                          limit_val_batches=cfg['limit_val_batches'],

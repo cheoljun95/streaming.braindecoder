@@ -69,6 +69,7 @@ discriminator_params:
     out_channels: 1
     use_spectral_norm: false
     use_weight_norm: true
+    period: null
   periods:
   - 2
   - 3
@@ -96,6 +97,8 @@ discriminator_params:
     nonlinear_activation_params:
       negative_slope: 0.1
     out_channels: 1
+    use_weight_norm: null
+    use_spectral_norm: null
   scale_downsample_pooling: AvgPool1d
   scale_downsample_pooling_params:
     kernel_size: 4
@@ -103,27 +106,26 @@ discriminator_params:
     stride: 2
   scales: 3
 loss_configs: 
-  generator_adv_loss_configs: 
-    mel_loss_configs:
-      fft_size: 1024
-      fmax: 11025
-      fmin: 0
-      fs: 16000
-      hop_size: 256
-      log_base: null
-      num_mels: 80
-      win_length: null
-      window: hann
-    feature_match_loss_configs:
-      average_by_discriminators: false # Whether to average loss by #discriminators.
-      average_by_layers: false         # Whether to average loss by #layers in each discriminator.
-      include_final_outputs: false     # Whether to include final outputs in feat match loss calculation.
-    generator_adv_loss_configs:
-      average_by_discriminators: false
-    discriminator_adv_loss_configs:
-      average_by_discriminators: false
-    dur_loss_configs:
-      shift: 1.0
+  mel_loss_configs:
+    fft_size: 1024
+    fmax: 11025
+    fmin: 0
+    fs: 16000
+    hop_size: 256
+    log_base: null
+    num_mels: 80
+    win_length: null
+    window: hann
+  feature_match_loss_configs:
+    average_by_discriminators: false 
+    average_by_layers: false         
+    include_final_outputs: false     
+  generator_adv_loss_configs:
+    average_by_discriminators: false
+  discriminator_adv_loss_configs:
+    average_by_discriminators: false
+  dur_loss_configs:
+    shift: 1.0
 gen_loss_coef:
   mel_loss: 45.0
   feat_match_loss: 2.0
@@ -157,7 +159,7 @@ disc_lr_configs:
     - 320000   
 data:
   wav_dir: data/wavs
-  unit_dir: data/unit
+  unit_dir: data/hb100
   split_manifests: 
     train: assets/manifests/train.txt
     dev: assets/manifests/dev.txt
@@ -173,5 +175,5 @@ resume_ckpt: null
 check_val_every_n_epoch: 1 
 val_check_interval: null 
 accumulate_grad_batches: 1
-gpus: '0'
+gpus: '7' #'0'
 seed: 41
